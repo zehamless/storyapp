@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
-import '../model/user.dart';
-import '../provider/auth_provider.dart';
+import '../bloc/auth_bloc.dart';
 
 class LoginScreen extends StatefulWidget {
   final Function() onLogin;
@@ -21,7 +20,6 @@ class LoginScreen extends StatefulWidget {
 class _LoginScreenState extends State<LoginScreen> {
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
-
   final formKey = GlobalKey<FormState>();
 
   @override
@@ -37,19 +35,12 @@ class _LoginScreenState extends State<LoginScreen> {
       body: Center(
         child: ConstrainedBox(
           constraints: const BoxConstraints(maxWidth: 300),
-
-          /// todo 16: add Form widget to handle form component, and
-          /// add component key
           child: Form(
             key: formKey,
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                /// todo 15: add component like TextFormField and Button,
-                /// add component like controller, hint, obscureText, and onPressed,
-                /// dispose that controller, and
-                /// add validation to validate the text.
                 TextFormField(
                   controller: emailController,
                   validator: (value) {
@@ -73,45 +64,40 @@ class _LoginScreenState extends State<LoginScreen> {
                   },
                 ),
                 const SizedBox(height: 8),
-
-                /// todo 18: update the UI when button is tapped.
-                context.watch<AuthProvider>().isLoadingLogin
-                    ? const Center(child: CircularProgressIndicator())
-                    : ElevatedButton(
-                      onPressed: () async {
+                BlocConsumer<AuthBloc, AuthState>(
+                  listener: (context, state) {
+                    if (state is AuthAuthenticated) {
+                      widget.onLogin();
+                    } else if (state is AuthUnauthenticated) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                          content: Text("Your email or password is invalid"),
+                        ),
+                      );
+                    }
+                  },
+                  builder: (context, state) {
+                    if (state is AuthLoading) {
+                      return const Center(child: CircularProgressIndicator());
+                    }
+                    return ElevatedButton(
+                      onPressed: () {
                         if (formKey.currentState!.validate()) {
-                          final scaffoldMessenger = ScaffoldMessenger.of(
-                            context,
-                          );
-                          final User user = User(
-                            email: emailController.text,
-                            password: passwordController.text,
-                          );
-                          final authRead = context.read<AuthProvider>();
-
-                          final result = await authRead.login(user);
-                          if (result) {
-                            // widget.onLogin();
-                          } else {
-                            scaffoldMessenger.showSnackBar(
-                              const SnackBar(
-                                content: Text(
-                                  "Your email or password is invalid",
-                                ),
-                              ),
-                            );
-                          }
+                          context.read<AuthBloc>().add(LoginEvent(
+                            emailController.text,
+                            passwordController.text,
+                          ));
                         }
                       },
                       child: const Text("LOGIN"),
-                    ),
+                    );
+                  },
+                ),
                 const SizedBox(height: 8),
-
-                /// todo 19: update the function when button is tapped.
-                // OutlinedButton(
-                //   // onPressed: () => widget.onRegister(),
-                //   child: const Text("REGISTER"),
-                // ),
+                OutlinedButton(
+                  onPressed: widget.onRegister,
+                  child: const Text("REGISTER"),
+                ),
               ],
             ),
           ),

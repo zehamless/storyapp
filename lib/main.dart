@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-import 'package:storyapp/provider/auth_provider.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:storyapp/bloc/auth_bloc.dart';
 import 'package:storyapp/repository/auth_repository.dart';
 import 'package:storyapp/route/router_delegate.dart';
 
@@ -17,21 +17,19 @@ class StoryApp extends StatefulWidget {
 
 class _StoryAppState extends State<StoryApp> {
   late MyRouterDelegate myRouterDelegate;
-  late AuthProvider authProvider;
+  late AuthRepository authRepository;
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
-    final authRepository = AuthRepository();
-    authProvider = AuthProvider(authRepository);
+    authRepository = AuthRepository();
     myRouterDelegate = MyRouterDelegate(authRepository);
   }
 
   @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider(
-      create: (context) => authProvider,
+    return BlocProvider(
+      create: (context) => AuthBloc(authRepository),
       child: MaterialApp(
         title: 'Story App',
         theme: ThemeData(primarySwatch: Colors.blue),

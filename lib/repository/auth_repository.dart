@@ -1,7 +1,7 @@
 import 'dart:convert';
 
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:storyapp/model/response.dart' as model;
 
 class AuthRepository {
@@ -15,12 +15,15 @@ class AuthRepository {
 
   Future<bool> isLoggedIn() async {
     final preferences = await SharedPreferences.getInstance();
-    return preferences.getBool(stateKey) ?? false;
+    return (preferences.getString(stateKey) != null);
   }
 
-  Future<bool> login() async {
+  Future<bool> login(String email, String password) async {
     final preferences = await SharedPreferences.getInstance();
-    final http.Response response = await _client.post(Uri.parse(_loginUrl));
+    final http.Response response = await _client.post(
+      Uri.parse(_loginUrl),
+      body: {"email": email, "password": password},
+    );
     if (response.statusCode == 200) {
       final loginResponse = model.Response.fromJson(jsonDecode(response.body));
       final token = loginResponse.loginResult?.token;
@@ -31,16 +34,13 @@ class AuthRepository {
     }
   }
 
-  Future<bool> register(String email, String password) async {
-    final preferences = await SharedPreferences.getInstance();
+  Future<bool> register(String email, String password, String name) async {
     final http.Response response = await _client.post(
       Uri.parse(_registerUrl),
-      body: {"email": email, "password": password},
+      body: {"email": email, "password": password, "name": name},
     );
-    if (response.statusCode == 200) {
-      final loginResponse = model.Response.fromJson(jsonDecode(response.body));
-      final token = loginResponse.loginResult?.token;
-      await preferences.setString(stateKey, token!);
+    if (response.statusCode == 201) {
+      await login(email, password);
       return true;
     } else {
       return false;

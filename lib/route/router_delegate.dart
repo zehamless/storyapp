@@ -16,7 +16,6 @@ class MyRouterDelegate extends RouterDelegate
 
   _init() async {
     isLoggedIn = await authRepository.isLoggedIn();
-    notifyListeners();
   }
 
   @override
