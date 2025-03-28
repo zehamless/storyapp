@@ -10,26 +10,20 @@ class MyRouterDelegate extends RouterDelegate
   final AuthRepository authRepository;
 
   MyRouterDelegate(this.authRepository)
-    : _navigatorKey = GlobalKey<NavigatorState>() {
+      : _navigatorKey = GlobalKey<NavigatorState>() {
     _init();
   }
 
-  _init() async {
+  Future<void> _init() async {
     isLoggedIn = await authRepository.isLoggedIn();
+    notifyListeners();
   }
 
   @override
   Widget build(BuildContext context) {
-    if(isLoggedIn == null) {
-      historyStack = _splashStack;
-    } else if (isLoggedIn == true) {
-      historyStack = _loggedInStack;
-    } else {
-      historyStack = _loggedOutStack;
-    }
     return Navigator(
       key: navigatorKey,
-      pages: historyStack,
+      pages: _buildPages(),
       onDidRemovePage: (page) {
         if (isRegister) {
           isRegister = false;
@@ -43,22 +37,24 @@ class MyRouterDelegate extends RouterDelegate
   GlobalKey<NavigatorState>? get navigatorKey => _navigatorKey;
 
   @override
-  Future<void> setNewRoutePath(configuration) {
+  Future<void> setNewRoutePath(configuration) async {
     // TODO: implement setNewRoutePath
     throw UnimplementedError();
   }
 
-  List<Page> historyStack = [];
-  bool? isLoggedIn;
-  bool isRegister = false;
-
-  List<Page> get _splashStack {
-    return [MaterialPage(child: SplashScreen())];
+  List<Page> _buildPages() {
+    if (isLoggedIn == null) {
+      return _splashStack;
+    } else if (isLoggedIn == true) {
+      return _loggedInStack;
+    } else {
+      return _loggedOutStack;
+    }
   }
 
-  List<Page> get _loggedInStack {
-    return [MaterialPage(child: SplashScreen())];
-  }
+  List<Page> get _splashStack => [MaterialPage(child: SplashScreen())];
+
+  List<Page> get _loggedInStack => [MaterialPage(child: SplashScreen())];
 
   List<Page> get _loggedOutStack {
     return [
@@ -89,4 +85,8 @@ class MyRouterDelegate extends RouterDelegate
         ),
     ];
   }
+
+  List<Page> historyStack = [];
+  bool? isLoggedIn;
+  bool isRegister = false;
 }

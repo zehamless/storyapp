@@ -16,8 +16,8 @@ class StoryApp extends StatefulWidget {
 }
 
 class _StoryAppState extends State<StoryApp> {
-  late MyRouterDelegate myRouterDelegate;
-  late AuthRepository authRepository;
+  late final MyRouterDelegate myRouterDelegate;
+  late final AuthRepository authRepository;
 
   @override
   void initState() {

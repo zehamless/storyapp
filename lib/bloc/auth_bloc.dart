@@ -1,7 +1,7 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:storyapp/repository/auth_repository.dart';
 
-class AuthEvent {}
+abstract class AuthEvent {}
 
 class LoginEvent extends AuthEvent {
   final String email;
@@ -20,7 +20,7 @@ class RegisterEvent extends AuthEvent {
 
 class LogoutEvent extends AuthEvent {}
 
-class AuthState {}
+abstract class AuthState {}
 
 class AuthInitial extends AuthState {}
 
@@ -34,41 +34,42 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   final AuthRepository authRepository;
 
   AuthBloc(this.authRepository) : super(AuthInitial()) {
-    on<LoginEvent>((event, emit) async {
-      emit(AuthLoading());
-      final isLoggedIn = await authRepository.login(
-        event.email,
-        event.password,
-      );
-      if (isLoggedIn) {
-        emit(AuthAuthenticated());
-      } else {
-        emit(AuthUnauthenticated());
-      }
-    });
+    on<LoginEvent>(_onLogin);
+    on<RegisterEvent>(_onRegister);
+    on<LogoutEvent>(_onLogout);
+  }
 
-    on<RegisterEvent>((event, emit) async {
-      emit(AuthLoading());
-      final isRegistered = await authRepository.register(
-        event.email,
-        event.password,
-        event.name,
-      );
-      if (isRegistered) {
-        emit(AuthAuthenticated());
-      } else {
-        emit(AuthUnauthenticated());
-      }
-    });
+  Future<void> _onLogin(LoginEvent event, Emitter<AuthState> emit) async {
+    emit(AuthLoading());
+    final isLoggedIn = await authRepository.login(event.email, event.password);
+    if (isLoggedIn) {
+      emit(AuthAuthenticated());
+    } else {
+      emit(AuthUnauthenticated());
+    }
+  }
 
-    on<LogoutEvent>((event, emit) async {
-      emit(AuthLoading());
-      final isLoggedOut = await authRepository.logout();
-      if (isLoggedOut) {
-        emit(AuthUnauthenticated());
-      } else {
-        emit(AuthAuthenticated());
-      }
-    });
+  Future<void> _onRegister(RegisterEvent event, Emitter<AuthState> emit) async {
+    emit(AuthLoading());
+    final isRegistered = await authRepository.register(
+      event.email,
+      event.password,
+      event.name,
+    );
+    if (isRegistered) {
+      emit(AuthAuthenticated());
+    } else {
+      emit(AuthUnauthenticated());
+    }
+  }
+
+  Future<void> _onLogout(LogoutEvent event, Emitter<AuthState> emit) async {
+    emit(AuthLoading());
+    final isLoggedOut = await authRepository.logout();
+    if (isLoggedOut) {
+      emit(AuthUnauthenticated());
+    } else {
+      emit(AuthAuthenticated());
+    }
   }
 }
