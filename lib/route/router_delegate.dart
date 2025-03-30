@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:storyapp/screen/list_story.dart';
 import 'package:storyapp/screen/login_screen.dart';
 import 'package:storyapp/screen/register_screen.dart';
+
 import '../repository/auth_repository.dart';
 import '../screen/splash_screen.dart';
 
@@ -10,7 +12,7 @@ class MyRouterDelegate extends RouterDelegate
   final AuthRepository authRepository;
 
   MyRouterDelegate(this.authRepository)
-      : _navigatorKey = GlobalKey<NavigatorState>() {
+    : _navigatorKey = GlobalKey<NavigatorState>() {
     _init();
   }
 
@@ -54,7 +56,7 @@ class MyRouterDelegate extends RouterDelegate
 
   List<Page> get _splashStack => [MaterialPage(child: SplashScreen())];
 
-  List<Page> get _loggedInStack => [MaterialPage(child: SplashScreen())];
+  List<Page> get _loggedInStack => [MaterialPage(child: ListStoryScreen())];
 
   List<Page> get _loggedOutStack {
     return [

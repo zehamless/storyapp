@@ -1,7 +1,7 @@
 import 'package:equatable/equatable.dart';
 
 class ListStory extends Equatable {
-  const ListStory({
+   ListStory({
     required this.id,
     required this.name,
     required this.description,
@@ -11,10 +11,10 @@ class ListStory extends Equatable {
     required this.lon,
   });
 
-  final String? id;
-  final String? name;
-  final String? description;
-  final String? photoUrl;
+  final String id;
+  final String name;
+  final String description;
+  final String photoUrl;
   final DateTime? createdAt;
   final double? lat;
   final double? lon;
