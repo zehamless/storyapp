@@ -1,10 +1,10 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:storyapp/model/list_story_model.dart';
+import 'package:storyapp/model/story_model.dart';
 
 class StoryCard extends StatelessWidget {
   final Function() onTap;
-  final ListStory story;
+  final Story story;
 
   const StoryCard({super.key, required this.onTap, required this.story});
 

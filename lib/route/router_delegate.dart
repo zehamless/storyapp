@@ -56,7 +56,16 @@ class MyRouterDelegate extends RouterDelegate
 
   List<Page> get _splashStack => [MaterialPage(child: SplashScreen())];
 
-  List<Page> get _loggedInStack => [MaterialPage(child: ListStoryScreen())];
+  List<Page> get _loggedInStack => [
+    MaterialPage(
+      child: ListStoryScreen(
+        onLogout: () async {
+          isLoggedIn = !await authRepository.logout();
+          notifyListeners();
+        },
+      ),
+    ),
+  ];
 
   List<Page> get _loggedOutStack {
     return [

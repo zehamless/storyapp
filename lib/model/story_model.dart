@@ -1,7 +1,7 @@
 import 'package:equatable/equatable.dart';
 
-class ListStory extends Equatable {
-   ListStory({
+class Story extends Equatable {
+   const Story({
     required this.id,
     required this.name,
     required this.description,
@@ -19,8 +19,8 @@ class ListStory extends Equatable {
   final double? lat;
   final double? lon;
 
-  factory ListStory.fromJson(Map<String, dynamic> json) {
-    return ListStory(
+  factory Story.fromJson(Map<String, dynamic> json) {
+    return Story(
       id: json["id"],
       name: json["name"],
       description: json["description"],

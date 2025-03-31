@@ -1,10 +1,11 @@
 import 'package:equatable/equatable.dart';
-import 'package:storyapp/model/list_story_model.dart';
+import 'package:storyapp/model/story_model.dart';
 
 import 'login_model.dart';
 
 class Response extends Equatable {
   const Response({
+    this.story,
     required this.error,
     required this.message,
     this.listStory,
@@ -13,18 +14,20 @@ class Response extends Equatable {
 
   final bool? error;
   final String? message;
-  final List<ListStory>? listStory;
+  final List<Story>? listStory;
   final LoginResult? loginResult;
+  final Story? story;
 
   factory Response.fromJson(Map<String, dynamic> json) {
     return Response(
       error: json["error"],
       message: json["message"],
+      story: json["story"] == null ? null : Story.fromJson(json["story"]),
       listStory:
           json["listStory"] == null
               ? []
-              : List<ListStory>.from(
-                json["listStory"]!.map((x) => ListStory.fromJson(x)),
+              : List<Story>.from(
+                json["listStory"]!.map((x) => Story.fromJson(x)),
               ),
       loginResult:
           json["loginResult"] == null
