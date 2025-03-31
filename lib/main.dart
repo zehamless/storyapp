@@ -28,14 +28,17 @@ class _StoryAppState extends State<StoryApp> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (context) => AuthBloc(authRepository),
-      child: MaterialApp(
-        title: 'Story App',
-        theme: ThemeData(primarySwatch: Colors.blue),
-        home: Router(
-          routerDelegate: myRouterDelegate,
-          backButtonDispatcher: RootBackButtonDispatcher(),
+    return RepositoryProvider(
+      create: (context) => authRepository,
+      child: BlocProvider(
+        create: (context) => AuthBloc(authRepository),
+        child: MaterialApp(
+          title: 'Story App',
+          theme: ThemeData(primarySwatch: Colors.blue),
+          home: Router(
+            routerDelegate: myRouterDelegate,
+            backButtonDispatcher: RootBackButtonDispatcher(),
+          ),
         ),
       ),
     );

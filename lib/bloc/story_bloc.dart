@@ -1,4 +1,5 @@
 import 'package:bloc/bloc.dart';
+import 'package:storyapp/repository/auth_repository.dart';
 
 import '../model/story_model.dart';
 
@@ -37,7 +38,9 @@ class StoryLoadError extends StoryState {
 }
 
 class StoryBloc extends Bloc<StoryEvent, StoryState> {
-  StoryBloc() : super(StoryInitial()) {
+  final AuthRepository _authRepository;
+
+  StoryBloc(this._authRepository) : super(StoryInitial()) {
     on<FetchStoryEvent>(_onFetchStory);
     on<FetchAllStoriesEvent>(_onFetchAllStories);
   }
@@ -47,23 +50,12 @@ class StoryBloc extends Bloc<StoryEvent, StoryState> {
     Emitter<StoryState> emit,
   ) async {
     emit(StoryLoading());
-    await Future.delayed(const Duration(seconds: 2));
-    emit(
-      StoryListLoaded(
-        List.generate(
-          20,
-          (index) => Story(
-            id: 'id_$index',
-            name: 'List_$index',
-            description: 'lorem ipsum dolor sit amet',
-            photoUrl: 'https://picsum.photos/seed/picsum/300/200',
-            createdAt: DateTime.now(),
-            lat: 0.0,
-            lon: 0.0,
-          ),
-        ),
-      ),
-    );
+    final List<Story> stories = await _authRepository.fetchAllStories();
+    if (stories.isNotEmpty) {
+      emit(StoryListLoaded(stories));
+    } else {
+      emit(StoryLoadError('Failed to load stories'));
+    }
   }
 
   Future<void> _onFetchStory(
@@ -71,19 +63,11 @@ class StoryBloc extends Bloc<StoryEvent, StoryState> {
     Emitter<StoryState> emit,
   ) async {
     emit(StoryLoading());
-    await Future.delayed(const Duration(seconds: 1));
-    emit(
-      StoryLoaded(
-        Story(
-          id: event.storyId,
-          name: 'Sample Story',
-          description: 'This is a sample story description.',
-          photoUrl: 'https://picsum.photos/seed/picsum/300/200',
-          createdAt: DateTime.now(),
-          lat: 0.0,
-          lon: 0.0,
-        ),
-      ),
-    );
+    final Story? story = await _authRepository.fetchStory(event.storyId);
+    if (story != null) {
+      emit(StoryLoaded(story));
+    } else {
+      emit(StoryLoadError('Failed to load story'));
+    }
   }
 }

@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:storyapp/model/story_model.dart';
+import 'package:storyapp/screen/detail_screen.dart';
 import 'package:storyapp/screen/list_story.dart';
 import 'package:storyapp/screen/login_screen.dart';
 import 'package:storyapp/screen/register_screen.dart';
@@ -10,6 +12,7 @@ class MyRouterDelegate extends RouterDelegate
     with ChangeNotifier, PopNavigatorRouterDelegateMixin {
   final GlobalKey<NavigatorState> _navigatorKey;
   final AuthRepository authRepository;
+  Story? selectedStory;
 
   MyRouterDelegate(this.authRepository)
     : _navigatorKey = GlobalKey<NavigatorState>() {
@@ -27,6 +30,10 @@ class MyRouterDelegate extends RouterDelegate
       key: navigatorKey,
       pages: _buildPages(),
       onDidRemovePage: (page) {
+        if (page.key == ValueKey(selectedStory)) {
+          selectedStory = null;
+          notifyListeners();
+        }
         if (isRegister) {
           isRegister = false;
           notifyListeners();
@@ -63,8 +70,17 @@ class MyRouterDelegate extends RouterDelegate
           isLoggedIn = !await authRepository.logout();
           notifyListeners();
         },
+        onTap: (story) {
+          selectedStory = story;
+          notifyListeners();
+        },
       ),
     ),
+    if (selectedStory != null)
+      MaterialPage(
+        key: ValueKey(selectedStory),
+        child: DetailScreen(story: selectedStory!),
+      ),
   ];
 
   List<Page> get _loggedOutStack {

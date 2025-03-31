@@ -19,14 +19,20 @@ class StoryCard extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              ClipRRect(
-                borderRadius: BorderRadius.circular(8),
+              ClipRect(
                 child: Hero(
                   tag: story.id,
                   child: CachedNetworkImage(
                     imageUrl: story.photoUrl,
                     fit: BoxFit.cover,
                     height: 200,
+                    placeholder:
+                        (context, url) =>
+                    const Center(child: CircularProgressIndicator()),
+                    errorWidget:
+                        (context, url, error) => const Center(
+                      child: Icon(Icons.error, size: 50, color: Colors.red),
+                    ),
                   ),
                 ),
               ),

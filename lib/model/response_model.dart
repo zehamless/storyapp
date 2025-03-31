@@ -41,8 +41,9 @@ class Response extends Equatable {
     "message": message,
     "listStory": listStory?.map((x) => x.toJson()).toList(),
     "loginResult": loginResult?.toJson(),
+    "story": story?.toJson(),
   };
 
   @override
-  List<Object?> get props => [error, message, listStory, loginResult];
+  List<Object?> get props => [error, message, listStory, loginResult, story];
 }
