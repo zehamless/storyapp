@@ -16,8 +16,9 @@ class ClearImageEvent extends ImagePickerEvent {}
 class UploadImageEvent extends ImagePickerEvent {
   final String imagePath;
   final XFile imageFile;
+  final String? caption;
 
-  UploadImageEvent(this.imagePath, this.imageFile);
+  UploadImageEvent(this.imagePath, this.imageFile, this.caption);
 }
 
 // States
