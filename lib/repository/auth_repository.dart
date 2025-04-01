@@ -96,4 +96,25 @@ class AuthRepository {
     }
     return null;
   }
+
+  Future<Story> uploadStory(String imagePath, String description) async {
+    final preferences = await SharedPreferences.getInstance();
+    final token = preferences.getString(tokenKey);
+
+    final request = http.MultipartRequest(
+      "POST",
+      Uri.parse("$_baseUrl/stories"),
+    );
+    request.headers["Authorization"] = "Bearer $token";
+    request.files.add(await http.MultipartFile.fromPath("photo", imagePath));
+    request.fields["description"] = description;
+
+    final response = await request.send();
+    final responseBody = await http.Response.fromStream(response);
+
+    if (response.statusCode == 201) {
+      return Story.fromJson(jsonDecode(responseBody.body));
+    }
+    throw Exception("Failed to upload story");
+  }
 }

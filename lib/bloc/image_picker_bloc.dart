@@ -13,6 +13,13 @@ class PickImageEvent extends ImagePickerEvent {
 
 class ClearImageEvent extends ImagePickerEvent {}
 
+class UploadImageEvent extends ImagePickerEvent {
+  final String imagePath;
+  final XFile imageFile;
+
+  UploadImageEvent(this.imagePath, this.imageFile);
+}
+
 // States
 abstract class ImagePickerState {}
 
@@ -33,6 +40,26 @@ class ImagePickerErrorState extends ImagePickerState {
   ImagePickerErrorState(this.errorMessage);
 }
 
+class ImageUploadLoadingState extends ImagePickerState {
+  final String imagePath;
+  final XFile imageFile;
+
+  ImageUploadLoadingState(this.imagePath, this.imageFile);
+}
+
+class ImageUploadSuccessState extends ImagePickerState {
+  final String imagePath;
+  final XFile imageFile;
+
+  ImageUploadSuccessState(this.imagePath, this.imageFile);
+}
+
+class ImageUploadErrorState extends ImagePickerState {
+  final String errorMessage;
+
+  ImageUploadErrorState(this.errorMessage);
+}
+
 // Bloc
 class ImagePickerBloc extends Bloc<ImagePickerEvent, ImagePickerState> {
   final ImagePicker _imagePicker;
@@ -41,7 +68,21 @@ class ImagePickerBloc extends Bloc<ImagePickerEvent, ImagePickerState> {
     : _imagePicker = imagePicker ?? ImagePicker(),
       super(ImagePickerInitial()) {
     on<PickImageEvent>(_onPickImage);
+    on<UploadImageEvent>(_uploadImage);
     on<ClearImageEvent>((event, emit) => emit(ImagePickerInitial()));
+  }
+
+  Future<void> _uploadImage(
+    UploadImageEvent event,
+    Emitter<ImagePickerState> emit,
+  ) async {
+    emit(ImageUploadLoadingState(event.imagePath, event.imageFile));
+    try {
+      await Future.delayed(Duration(seconds: 5));
+      emit(ImageUploadSuccessState(event.imagePath, event.imageFile));
+    } catch (e) {
+      emit(ImageUploadErrorState(e.toString()));
+    }
   }
 
   Future<void> _onPickImage(
