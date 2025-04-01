@@ -1,4 +1,5 @@
 import 'dart:io';
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -19,18 +20,18 @@ class _MediaScreenState extends State<MediaScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (context) => ImagePickerBloc(),
-      child: BlocBuilder<ImagePickerBloc, ImagePickerState>(
-        builder: (context, state) {
-          return Scaffold(
-            appBar: AppBar(
-              title: const Text(
-                'Post Story',
-                style: TextStyle(fontWeight: FontWeight.bold),
-              ),
-            ),
-            body: Padding(
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text(
+          "Post Story",
+          style: TextStyle(fontWeight: FontWeight.bold),
+        ),
+      ),
+      body: BlocProvider(
+        create: (context) => ImagePickerBloc(),
+        child: BlocConsumer<ImagePickerBloc, ImagePickerState>(
+          builder: (context, state) {
+            return Padding(
               padding: const EdgeInsets.all(16.0),
               child: Column(
                 children: [
@@ -41,43 +42,17 @@ class _MediaScreenState extends State<MediaScreen> {
                   if (state is ImagePickedState)
                     Padding(
                       padding: const EdgeInsets.symmetric(vertical: 8),
-                      child: BlocConsumer<ImagePickerBloc, ImagePickerState>(
-                        listener: (context, state) {
-                          if (state is ImageUploadSuccessState) {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(
-                                content: Text("Image uploaded successfully!"),
-                              ),
-                            );
-                            widget.onClose();
-                          } else if (state is ImageUploadErrorState) {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(content: Text(state.errorMessage)),
-                            );
-                          }
-                        },
-                        builder: (context, state) {
-                          if (state is ImageUploadLoadingState) {
-                            return const CircularProgressIndicator();
-                          }
-                          return ElevatedButton.icon(
-                            onPressed: () {
-                              if (state is ImagePickedState) {
-                                context.read<ImagePickerBloc>().add(
-                                  UploadImageEvent(
-                                    state.imagePath,
-                                    state.imageFile,
-                                  ),
-                                );
-                              }
-                            },
-                            icon: const Icon(Icons.cloud_upload),
-                            label: const Text(
-                              "UPLOAD",
-                              style: TextStyle(fontWeight: FontWeight.bold),
-                            ),
+                      child: ElevatedButton.icon(
+                        onPressed: () {
+                          context.read<ImagePickerBloc>().add(
+                            UploadImageEvent(state.imagePath, state.imageFile),
                           );
                         },
+                        icon: const Icon(Icons.cloud_upload),
+                        label: const Text(
+                          "UPLOAD",
+                          style: TextStyle(fontWeight: FontWeight.bold),
+                        ),
                       ),
                     ),
                   Padding(
@@ -105,9 +80,21 @@ class _MediaScreenState extends State<MediaScreen> {
                   ),
                 ],
               ),
-            ),
-          );
-        },
+            );
+          },
+          listener: (context, state) {
+            if (state is ImageUploadSuccessState) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(content: Text("Image uploaded successfully!")),
+              );
+              widget.onClose();
+            } else if (state is ImageUploadErrorState) {
+              ScaffoldMessenger.of(
+                context,
+              ).showSnackBar(SnackBar(content: Text(state.errorMessage)));
+            }
+          },
+        ),
       ),
     );
   }
