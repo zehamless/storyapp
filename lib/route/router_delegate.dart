@@ -3,6 +3,7 @@ import 'package:storyapp/model/story_model.dart';
 import 'package:storyapp/screen/detail_screen.dart';
 import 'package:storyapp/screen/list_story.dart';
 import 'package:storyapp/screen/login_screen.dart';
+import 'package:storyapp/screen/media_screen.dart';
 import 'package:storyapp/screen/register_screen.dart';
 
 import '../repository/auth_repository.dart';
@@ -13,6 +14,7 @@ class MyRouterDelegate extends RouterDelegate
   final GlobalKey<NavigatorState> _navigatorKey;
   final AuthRepository authRepository;
   Story? selectedStory;
+  bool showMediaScreen = false;
 
   MyRouterDelegate(this.authRepository)
     : _navigatorKey = GlobalKey<NavigatorState>() {
@@ -51,6 +53,11 @@ class MyRouterDelegate extends RouterDelegate
     throw UnimplementedError();
   }
 
+  void navigateToMedia() {
+    showMediaScreen = !showMediaScreen;
+    notifyListeners();
+  }
+
   List<Page> _buildPages() {
     if (isLoggedIn == null) {
       return _splashStack;
@@ -74,8 +81,11 @@ class MyRouterDelegate extends RouterDelegate
           selectedStory = story;
           notifyListeners();
         },
+        onPressedFloating: navigateToMedia,
       ),
     ),
+    if (showMediaScreen)
+      MaterialPage(child: MediaScreen(onClose: navigateToMedia)),
     if (selectedStory != null)
       MaterialPage(
         key: ValueKey(selectedStory),

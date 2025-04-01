@@ -7,12 +7,13 @@ import 'package:storyapp/repository/auth_repository.dart';
 
 class ListStoryScreen extends StatelessWidget {
   final Function() onLogout;
+  final Function() onPressedFloating;
   final Function(Story) onTap;
 
   const ListStoryScreen({
     super.key,
     required this.onLogout,
-    required this.onTap,
+    required this.onTap, required this.onPressedFloating,
   });
 
   @override
@@ -72,12 +73,7 @@ class ListStoryScreen extends StatelessWidget {
           },
         ),
         floatingActionButton: FloatingActionButton(
-          onPressed: () {
-            // Add navigation to create story screen
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Text("Add story feature coming soon")),
-            );
-          },
+          onPressed: onPressedFloating,
           tooltip: 'Add Story',
           child: const Icon(Icons.add),
         ),
