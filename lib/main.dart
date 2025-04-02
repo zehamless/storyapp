@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:storyapp/bloc/auth_bloc.dart';
+import 'package:storyapp/bloc/story_bloc.dart';
 import 'package:storyapp/repository/auth_repository.dart';
 import 'package:storyapp/route/router_delegate.dart';
 
@@ -30,8 +31,15 @@ class _StoryAppState extends State<StoryApp> {
   Widget build(BuildContext context) {
     return RepositoryProvider(
       create: (context) => authRepository,
-      child: BlocProvider(
-        create: (context) => AuthBloc(authRepository),
+      child: MultiBlocProvider(
+        providers: [
+          BlocProvider<AuthBloc>(create: (context) => AuthBloc(authRepository)),
+          BlocProvider<StoryBloc>(
+            create:
+                (context) =>
+                    StoryBloc(authRepository)..add(FetchAllStoriesEvent()),
+          ),
+        ],
         child: MaterialApp(
           title: 'Story App',
           theme: ThemeData(primarySwatch: Colors.blue),

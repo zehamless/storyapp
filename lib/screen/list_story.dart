@@ -3,7 +3,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:storyapp/bloc/story_bloc.dart';
 import 'package:storyapp/component/story_card.dart';
 import 'package:storyapp/model/story_model.dart';
-import 'package:storyapp/repository/auth_repository.dart';
 
 class ListStoryScreen extends StatelessWidget {
   final Function() onLogout;
@@ -13,70 +12,65 @@ class ListStoryScreen extends StatelessWidget {
   const ListStoryScreen({
     super.key,
     required this.onLogout,
-    required this.onTap, required this.onPressedFloating,
+    required this.onTap,
+    required this.onPressedFloating,
   });
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create:
-          (context) =>
-              StoryBloc(context.read<AuthRepository>())
-                ..add(FetchAllStoriesEvent()),
-      child: Scaffold(
-        appBar: AppBar(
-          title: const Text(
-            "Stories",
-            style: TextStyle(fontWeight: FontWeight.bold),
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text(
+          "Stories",
+          style: TextStyle(fontWeight: FontWeight.bold),
+        ),
+        elevation: 2,
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.logout),
+            tooltip: "Logout",
+            onPressed: () {
+              showDialog(
+                context: context,
+                builder:
+                    (context) => AlertDialog(
+                      title: const Text("Logout"),
+                      content: const Text("Are you sure you want to logout?"),
+                      actions: [
+                        TextButton(
+                          onPressed: () => Navigator.pop(context),
+                          child: const Text("CANCEL"),
+                        ),
+                        TextButton(
+                          onPressed: () {
+                            Navigator.pop(context);
+                            onLogout();
+                          },
+                          child: const Text("LOGOUT"),
+                        ),
+                      ],
+                    ),
+              );
+            },
           ),
-          elevation: 2,
-          actions: [
-            IconButton(
-              icon: const Icon(Icons.logout),
-              tooltip: "Logout",
-              onPressed: () {
-                showDialog(
-                  context: context,
-                  builder:
-                      (context) => AlertDialog(
-                        title: const Text("Logout"),
-                        content: const Text("Are you sure you want to logout?"),
-                        actions: [
-                          TextButton(
-                            onPressed: () => Navigator.pop(context),
-                            child: const Text("CANCEL"),
-                          ),
-                          TextButton(
-                            onPressed: () {
-                              Navigator.pop(context);
-                              onLogout();
-                            },
-                            child: const Text("LOGOUT"),
-                          ),
-                        ],
-                      ),
-                );
-              },
-            ),
-          ],
-        ),
-        body: BlocBuilder<StoryBloc, StoryState>(
-          builder: (context, state) {
-            if (state is StoryLoading || state is StoryInitial) {
-              return _buildLoadingView();
-            } else if (state is StoryListLoaded) {
-              return _buildStoryList(context, state.stories);
-            } else if (state is StoryLoadError) {
-              return _buildErrorView(context, state.message);
-            }
-            return const SizedBox();
-          },
-        ),
-        floatingActionButton: FloatingActionButton(
-          onPressed: onPressedFloating,
-          tooltip: 'Add Story',
-          child: const Icon(Icons.add),
-        ),
+        ],
+      ),
+      body: BlocBuilder<StoryBloc, StoryState>(
+        builder: (context, state) {
+          if (state is StoryLoading || state is StoryInitial) {
+            return _buildLoadingView();
+          } else if (state is StoryListLoaded) {
+            return _buildStoryList(context, state.stories);
+          } else if (state is StoryLoadError) {
+            return _buildErrorView(context, state.message);
+          }
+          return const SizedBox();
+        },
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: onPressedFloating,
+        tooltip: 'Add Story',
+        child: const Icon(Icons.add),
       ),
     );
   }

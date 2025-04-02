@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:storyapp/bloc/image_picker_bloc.dart';
+import 'package:storyapp/bloc/story_bloc.dart';
 import 'package:storyapp/repository/auth_repository.dart';
 
 class MediaScreen extends StatefulWidget {
@@ -43,6 +44,7 @@ class _MediaScreenState extends State<MediaScreen> {
               ScaffoldMessenger.of(context).showSnackBar(
                 const SnackBar(content: Text("Image uploaded successfully!")),
               );
+              context.read<StoryBloc>().add(FetchAllStoriesEvent());
               widget.onClose();
             } else if (state is ImageUploadErrorState) {
               ScaffoldMessenger.of(
