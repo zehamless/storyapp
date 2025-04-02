@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:storyapp/bloc/image_picker_bloc.dart';
+import 'package:storyapp/repository/auth_repository.dart';
 
 class MediaScreen extends StatefulWidget {
   final Function() onClose;
@@ -35,7 +36,7 @@ class _MediaScreenState extends State<MediaScreen> {
         ),
       ),
       body: BlocProvider(
-        create: (context) => ImagePickerBloc(),
+        create: (context) => ImagePickerBloc(context.read<AuthRepository>()),
         child: BlocConsumer<ImagePickerBloc, ImagePickerState>(
           listener: (context, state) {
             if (state is ImageUploadSuccessState) {
@@ -170,12 +171,7 @@ class _MediaScreenState extends State<MediaScreen> {
     if (state is ImagePickedState ||
         state is ImageUploadLoadingState ||
         state is ImageUploadSuccessState) {
-      String imagePath =
-          (state is ImagePickedState)
-              ? state.imagePath
-              : (state is ImageUploadLoadingState)
-              ? state.imagePath
-              : (state as ImageUploadSuccessState).imagePath;
+      String imagePath = (state as dynamic).imagePath;
 
       return ClipRRect(
         borderRadius: BorderRadius.circular(8),
@@ -198,7 +194,7 @@ class _MediaScreenState extends State<MediaScreen> {
                     child: Ink(
                       padding: const EdgeInsets.all(8),
                       decoration: BoxDecoration(
-                        color: Colors.black.withOpacity(0.5),
+                        color: Colors.black.withValues(alpha: 0.5),
                         shape: BoxShape.circle,
                       ),
                       child: const Icon(
@@ -212,7 +208,7 @@ class _MediaScreenState extends State<MediaScreen> {
               ),
             if (state is ImageUploadLoadingState)
               Container(
-                color: Colors.black.withOpacity(0.3),
+                color: Colors.black.withValues(alpha: 0.3),
                 child: const Center(
                   child: CircularProgressIndicator(color: Colors.white),
                 ),

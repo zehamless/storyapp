@@ -97,7 +97,7 @@ class AuthRepository {
     return null;
   }
 
-  Future<Story> uploadStory(String imagePath, String description) async {
+  Future<model.Response> uploadStory(String imagePath, String description) async {
     final preferences = await SharedPreferences.getInstance();
     final token = preferences.getString(tokenKey);
 
@@ -113,7 +113,7 @@ class AuthRepository {
     final responseBody = await http.Response.fromStream(response);
 
     if (response.statusCode == 201) {
-      return Story.fromJson(jsonDecode(responseBody.body));
+      return model.Response.fromJson(jsonDecode(responseBody.body));
     }
     throw Exception("Failed to upload story");
   }

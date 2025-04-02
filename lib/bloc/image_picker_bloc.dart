@@ -1,5 +1,6 @@
 import 'package:bloc/bloc.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:storyapp/repository/auth_repository.dart';
 
 // Events
 abstract class ImagePickerEvent {}
@@ -16,7 +17,7 @@ class ClearImageEvent extends ImagePickerEvent {}
 class UploadImageEvent extends ImagePickerEvent {
   final String imagePath;
   final XFile imageFile;
-  final String? caption;
+  final String caption;
 
   UploadImageEvent(this.imagePath, this.imageFile, this.caption);
 }
@@ -51,8 +52,9 @@ class ImageUploadLoadingState extends ImagePickerState {
 class ImageUploadSuccessState extends ImagePickerState {
   final String imagePath;
   final XFile imageFile;
+  final String caption;
 
-  ImageUploadSuccessState(this.imagePath, this.imageFile);
+  ImageUploadSuccessState(this.imagePath, this.imageFile, this.caption);
 }
 
 class ImageUploadErrorState extends ImagePickerState {
@@ -64,8 +66,9 @@ class ImageUploadErrorState extends ImagePickerState {
 // Bloc
 class ImagePickerBloc extends Bloc<ImagePickerEvent, ImagePickerState> {
   final ImagePicker _imagePicker;
+  final AuthRepository authRepository;
 
-  ImagePickerBloc({ImagePicker? imagePicker})
+  ImagePickerBloc(this.authRepository, {ImagePicker? imagePicker})
     : _imagePicker = imagePicker ?? ImagePicker(),
       super(ImagePickerInitial()) {
     on<PickImageEvent>(_onPickImage);
@@ -79,8 +82,14 @@ class ImagePickerBloc extends Bloc<ImagePickerEvent, ImagePickerState> {
   ) async {
     emit(ImageUploadLoadingState(event.imagePath, event.imageFile));
     try {
-      await Future.delayed(Duration(seconds: 5));
-      emit(ImageUploadSuccessState(event.imagePath, event.imageFile));
+      await authRepository.uploadStory(event.imagePath, event.caption);
+      emit(
+        ImageUploadSuccessState(
+          event.imagePath,
+          event.imageFile,
+          event.caption,
+        ),
+      );
     } catch (e) {
       emit(ImageUploadErrorState(e.toString()));
     }
