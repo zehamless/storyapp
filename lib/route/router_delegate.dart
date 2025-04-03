@@ -40,6 +40,10 @@ class MyRouterDelegate extends RouterDelegate
           isRegister = false;
           notifyListeners();
         }
+        if (showMediaScreen) {
+          showMediaScreen = false;
+          notifyListeners();
+        }
       },
     );
   }

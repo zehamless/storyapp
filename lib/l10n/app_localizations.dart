@@ -104,7 +104,7 @@ abstract class AppLocalizations {
   /// No description provided for @detailDescription.
   ///
   /// In en, this message translates to:
-  /// **'This is the detail page of the story.'**
+  /// **'Detail of story:'**
   String get detailDescription;
 
   /// No description provided for @listStories.

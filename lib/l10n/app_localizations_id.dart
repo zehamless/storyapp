@@ -12,7 +12,7 @@ class AppLocalizationsId extends AppLocalizations {
   String get detailTitle => 'Detail Cerita';
 
   @override
-  String get detailDescription => 'Ini adalah halaman detail cerita.';
+  String get detailDescription => 'Detail cerita:';
 
   @override
   String get listStories => 'Daftar Cerita';

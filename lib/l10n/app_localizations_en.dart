@@ -12,7 +12,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get detailTitle => 'Detail Story';
 
   @override
-  String get detailDescription => 'This is the detail page of the story.';
+  String get detailDescription => 'Detail of story:';
 
   @override
   String get listStories => 'List of Stories';
