@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:storyapp/bloc/story_bloc.dart';
+import 'package:storyapp/component/flag.dart';
 import 'package:storyapp/component/story_card.dart';
+import 'package:storyapp/l10n/app_localizations.dart';
 import 'package:storyapp/model/story_model.dart';
 
 class ListStoryScreen extends StatelessWidget {
@@ -20,33 +22,36 @@ class ListStoryScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text(
-          "Stories",
-          style: TextStyle(fontWeight: FontWeight.bold),
+        title: Text(
+          AppLocalizations.of(context)!.listStories,
+          style: const TextStyle(fontWeight: FontWeight.bold),
         ),
         elevation: 2,
         actions: [
+          FlagIconWidget(),
           IconButton(
             icon: const Icon(Icons.logout),
-            tooltip: "Logout",
+            tooltip: AppLocalizations.of(context)!.logout,
             onPressed: () {
               showDialog(
                 context: context,
                 builder:
                     (context) => AlertDialog(
-                      title: const Text("Logout"),
-                      content: const Text("Are you sure you want to logout?"),
+                      title: Text(AppLocalizations.of(context)!.logout),
+                      content: Text(
+                        AppLocalizations.of(context)!.logoutMessage,
+                      ),
                       actions: [
                         TextButton(
                           onPressed: () => Navigator.pop(context),
-                          child: const Text("CANCEL"),
+                          child: Text(AppLocalizations.of(context)!.cancel),
                         ),
                         TextButton(
                           onPressed: () {
                             Navigator.pop(context);
                             onLogout();
                           },
-                          child: const Text("LOGOUT"),
+                          child: Text(AppLocalizations.of(context)!.logout),
                         ),
                       ],
                     ),
@@ -58,7 +63,7 @@ class ListStoryScreen extends StatelessWidget {
       body: BlocBuilder<StoryBloc, StoryState>(
         builder: (context, state) {
           if (state is StoryLoading || state is StoryInitial) {
-            return _buildLoadingView();
+            return _buildLoadingView(context);
           } else if (state is StoryListLoaded) {
             return _buildStoryList(context, state.stories);
           } else if (state is StoryLoadError) {
@@ -69,20 +74,23 @@ class ListStoryScreen extends StatelessWidget {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: onPressedFloating,
-        tooltip: 'Add Story',
+        tooltip: AppLocalizations.of(context)!.addStory,
         child: const Icon(Icons.add),
       ),
     );
   }
 
-  Widget _buildLoadingView() {
+  Widget _buildLoadingView(BuildContext context) {
     return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
-        children: const [
-          CircularProgressIndicator(),
-          SizedBox(height: 16),
-          Text("Loading stories...", style: TextStyle(color: Colors.grey)),
+        children: [
+          const CircularProgressIndicator(),
+          const SizedBox(height: 16),
+          Text(
+            AppLocalizations.of(context)!.loadingStory,
+            style: const TextStyle(color: Colors.grey),
+          ),
         ],
       ),
     );
@@ -97,14 +105,14 @@ class ListStoryScreen extends StatelessWidget {
             Icon(Icons.article_outlined, size: 64, color: Colors.grey[400]),
             const SizedBox(height: 16),
             Text(
-              "No stories yet",
+              AppLocalizations.of(context)!.emptyStory,
               style: Theme.of(
                 context,
               ).textTheme.titleLarge?.copyWith(color: Colors.grey[600]),
             ),
             const SizedBox(height: 8),
             Text(
-              "Create a new story by tapping the + button",
+              AppLocalizations.of(context)!.createStoryMessage,
               style: Theme.of(context).textTheme.bodyMedium,
             ),
           ],
@@ -138,7 +146,7 @@ class ListStoryScreen extends StatelessWidget {
           Icon(Icons.error_outline, size: 64, color: Colors.red[300]),
           const SizedBox(height: 16),
           Text(
-            "Something went wrong",
+            AppLocalizations.of(context)!.errorLoadingStory,
             style: Theme.of(context).textTheme.titleLarge,
           ),
           const SizedBox(height: 8),
@@ -156,7 +164,7 @@ class ListStoryScreen extends StatelessWidget {
               context.read<StoryBloc>().add(FetchAllStoriesEvent());
             },
             icon: const Icon(Icons.refresh),
-            label: const Text("Try Again"),
+            label: Text(AppLocalizations.of(context)!.refresh),
           ),
         ],
       ),

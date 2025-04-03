@@ -8,6 +8,8 @@ import 'package:storyapp/bloc/image_picker_bloc.dart';
 import 'package:storyapp/bloc/story_bloc.dart';
 import 'package:storyapp/repository/auth_repository.dart';
 
+import '../l10n/app_localizations.dart';
+
 class MediaScreen extends StatefulWidget {
   final Function() onClose;
 
@@ -31,10 +33,13 @@ class _MediaScreenState extends State<MediaScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text(
-          "Post Story",
-          style: TextStyle(fontWeight: FontWeight.bold),
+        title: Text(
+          AppLocalizations.of(context)!.uploadTitle,
+          style: const TextStyle(fontWeight: FontWeight.bold),
         ),
+        actions: [
+
+        ],
       ),
       body: BlocProvider(
         create: (context) => ImagePickerBloc(context.read<AuthRepository>()),
@@ -42,7 +47,9 @@ class _MediaScreenState extends State<MediaScreen> {
           listener: (context, state) {
             if (state is ImageUploadSuccessState) {
               ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text("Image uploaded successfully!")),
+                SnackBar(
+                  content: Text(AppLocalizations.of(context)!.successUpload),
+                ),
               );
               context.read<StoryBloc>().add(FetchAllStoriesEvent());
               widget.onClose();
@@ -70,14 +77,16 @@ class _MediaScreenState extends State<MediaScreen> {
                       controller: captionController,
                       minLines: 2,
                       maxLines: 3,
-                      decoration: const InputDecoration(
-                        labelText: "Caption",
-                        border: OutlineInputBorder(),
-                        hintText: "Write something about your image...",
+                      decoration: InputDecoration(
+                        labelText: AppLocalizations.of(context)!.captionLabel,
+                        border: const OutlineInputBorder(),
+                        hintText: AppLocalizations.of(context)!.captionHint,
                       ),
                       validator: (value) {
                         if (value == null || value.isEmpty) {
-                          return "Please enter a caption";
+                          return AppLocalizations.of(
+                            context,
+                          )!.captionValidation;
                         }
                         return null;
                       },
@@ -136,7 +145,7 @@ class _MediaScreenState extends State<MediaScreen> {
                           child: ElevatedButton.icon(
                             onPressed: () => _galleryPick(context),
                             icon: const Icon(Icons.photo_library),
-                            label: const Text("Gallery"),
+                            label: Text(AppLocalizations.of(context)!.gallery),
                           ),
                         ),
                         const SizedBox(width: 16),
@@ -144,7 +153,7 @@ class _MediaScreenState extends State<MediaScreen> {
                           child: ElevatedButton.icon(
                             onPressed: () => _cameraPick(context),
                             icon: const Icon(Icons.camera_alt),
-                            label: const Text("Camera"),
+                            label: Text(AppLocalizations.of(context)!.camera),
                           ),
                         ),
                       ],

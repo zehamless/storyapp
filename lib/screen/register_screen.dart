@@ -1,6 +1,7 @@
 import 'package:faker/faker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:storyapp/l10n/app_localizations.dart';
 import '../bloc/auth_bloc.dart';
 
 class RegisterScreen extends StatefulWidget {
@@ -27,7 +28,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    final faker = new Faker();
+    final faker = Faker();
     nameController.text = faker.person.name();
     emailController.text = faker.internet.email();
     passwordController.text = faker.randomGenerator.numbers(9, 9).join();
@@ -58,7 +59,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   controller: nameController,
                   validator: (value) {
                     if (value == null || value.isEmpty) {
-                      return 'Please enter your name.';
+                      return AppLocalizations.of(context)!.nameValidation;
                     }
                     return null;
                   },
@@ -68,7 +69,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   controller: emailController,
                   validator: (value) {
                     if (value == null || value.isEmpty) {
-                      return 'Please enter your email.';
+                      return AppLocalizations.of(context)!.emailValidation;
                     }
                     return null;
                   },
@@ -79,7 +80,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   controller: passwordController,
                   validator: (value) {
                     if (value == null || value.isEmpty) {
-                      return 'Please enter your password.';
+                      return AppLocalizations.of(context)!.passwordValidation;
                     }
                     return null;
                   },
@@ -92,7 +93,11 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       widget.onLogin();
                     } else if (state is AuthUnauthenticated) {
                       ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(content: Text("Registration failed")),
+                        SnackBar(
+                          content: Text(
+                            AppLocalizations.of(context)!.registerFailed,
+                          ),
+                        ),
                       );
                     }
                   },
@@ -112,7 +117,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                           );
                         }
                       },
-                      child: const Text("Register"),
+                      child: Text(AppLocalizations.of(context)!.registerButton),
                     );
                   },
                 ),

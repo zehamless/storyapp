@@ -1,5 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:storyapp/l10n/app_localizations.dart';
 import 'package:storyapp/model/story_model.dart';
 
 class DetailScreen extends StatelessWidget {
@@ -12,7 +13,7 @@ class DetailScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          'Story Details',
+          AppLocalizations.of(context)!.detailTitle,
           style: TextStyle(fontWeight: FontWeight.bold),
         ),
       ),
@@ -56,7 +57,7 @@ class DetailScreen extends StatelessWidget {
 
                   const SizedBox(height: 8),
                   Text(
-                    'Story Description',
+                    AppLocalizations.of(context)!.detailDescription,
                     style: Theme.of(context).textTheme.titleMedium?.copyWith(
                       fontWeight: FontWeight.w500,
                     ),

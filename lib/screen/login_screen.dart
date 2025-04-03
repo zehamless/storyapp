@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../bloc/auth_bloc.dart';
+import '../l10n/app_localizations.dart';
 
 class LoginScreen extends StatefulWidget {
   final Function() onLogin;
@@ -60,7 +61,7 @@ class _LoginScreenState extends State<LoginScreen> {
       controller: emailController,
       validator: (value) {
         if (value == null || value.isEmpty) {
-          return 'Please enter your email.';
+          return AppLocalizations.of(context)!.emailValidation;
         }
         return null;
       },
@@ -74,7 +75,7 @@ class _LoginScreenState extends State<LoginScreen> {
       obscureText: true,
       validator: (value) {
         if (value == null || value.isEmpty) {
-          return 'Please enter your password.';
+          return AppLocalizations.of(context)!.passwordValidation;
         }
         return null;
       },
@@ -89,7 +90,7 @@ class _LoginScreenState extends State<LoginScreen> {
           widget.onLogin();
         } else if (state is AuthUnauthenticated) {
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text("Your email or password is invalid")),
+            SnackBar(content: Text(AppLocalizations.of(context)!.invalidAuth)),
           );
         }
       },
@@ -105,7 +106,7 @@ class _LoginScreenState extends State<LoginScreen> {
               );
             }
           },
-          child: const Text("LOGIN"),
+          child: Text(AppLocalizations.of(context)!.loginButton),
         );
       },
     );
@@ -114,7 +115,7 @@ class _LoginScreenState extends State<LoginScreen> {
   Widget _buildRegisterButton() {
     return OutlinedButton(
       onPressed: widget.onRegister,
-      child: const Text("REGISTER"),
+      child: Text(AppLocalizations.of(context)!.registerButton),
     );
   }
 }
