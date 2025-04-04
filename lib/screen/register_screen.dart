@@ -1,7 +1,7 @@
-import 'package:faker/faker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:storyapp/l10n/app_localizations.dart';
+
 import '../bloc/auth_bloc.dart';
 
 class RegisterScreen extends StatefulWidget {
@@ -23,16 +23,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
   final passwordController = TextEditingController();
   final nameController = TextEditingController();
   final formKey = GlobalKey<FormState>();
-
-  @override
-  void initState() {
-    // TODO: implement initState
-    super.initState();
-    final faker = Faker();
-    nameController.text = faker.person.name();
-    emailController.text = faker.internet.email();
-    passwordController.text = faker.randomGenerator.numbers(9, 9).join();
-  }
 
   @override
   void dispose() {
@@ -77,6 +67,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 ),
                 const SizedBox(height: 8),
                 TextFormField(
+                  obscureText: true,
+                  enableSuggestions: false,
+                  autocorrect: false,
                   controller: passwordController,
                   validator: (value) {
                     if (value == null || value.isEmpty) {
@@ -112,7 +105,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                             RegisterEvent(
                               emailController.text,
                               passwordController.text,
-                              emailController.text,
+                              nameController.text,
                             ),
                           );
                         }

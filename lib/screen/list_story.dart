@@ -32,31 +32,7 @@ class ListStoryScreen extends StatelessWidget {
           IconButton(
             icon: const Icon(Icons.logout),
             tooltip: AppLocalizations.of(context)!.logout,
-            onPressed: () {
-              showDialog(
-                context: context,
-                builder:
-                    (context) => AlertDialog(
-                      title: Text(AppLocalizations.of(context)!.logout),
-                      content: Text(
-                        AppLocalizations.of(context)!.logoutMessage,
-                      ),
-                      actions: [
-                        TextButton(
-                          onPressed: () => Navigator.pop(context),
-                          child: Text(AppLocalizations.of(context)!.cancel),
-                        ),
-                        TextButton(
-                          onPressed: () {
-                            Navigator.pop(context);
-                            onLogout();
-                          },
-                          child: Text(AppLocalizations.of(context)!.logout),
-                        ),
-                      ],
-                    ),
-              );
-            },
+            onPressed: onLogout,
           ),
         ],
       ),
